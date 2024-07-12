@@ -5,7 +5,7 @@ function Home() {
   return (
     <div>
       <p>Home hi</p>
-      <UserButton afterSignOutUrl='/' />
+      {/* <UserButton afterSignOutUrl='/' /> */}
       </div>
   )
 }

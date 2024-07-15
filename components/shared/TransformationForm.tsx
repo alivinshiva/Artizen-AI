@@ -28,6 +28,8 @@ import { CustomField } from './CustomField'
 import { AspectRatioKey, debounce, deepMergeObjects } from '@/lib/utils'
 import { set } from 'mongoose'
 import { updateCredits } from '@/lib/actions/user.actions'
+import MediaUploader from './MediaUploader'
+import TransformedImage from './TransformedImage'
 
 export const formSchema = z.object({
     title: z.string(),
@@ -70,54 +72,54 @@ const TransformationForm = ({ data = null, action, type, userId, creditBalance, 
 
     const onSelectFieldHandler = (value: string, onChangeField: (value: string) => void) => {
         const imageSize = aspectRatioOptions[value as AspectRatioKey]
-    
+
         setImage((prevState: any) => ({
-          ...prevState,
-          aspectRatio: imageSize.aspectRatio,
-          width: imageSize.width,
-          height: imageSize.height,
+            ...prevState,
+            aspectRatio: imageSize.aspectRatio,
+            width: imageSize.width,
+            height: imageSize.height,
         }))
-    
+
         setNewTransformation(transformationType.config);
-    
+
         return onChangeField(value)
-      }
-    
-      const onInputChangeHandler = (fieldName: string, value: string, type: string, onChangeField: (value: string) => void) => {
+    }
+
+    const onInputChangeHandler = (fieldName: string, value: string, type: string, onChangeField: (value: string) => void) => {
 
         // debounce the function for 1000msto avoid multiple calls to the API
         debounce(() => {
-          setNewTransformation((prevState: any) => ({
-            ...prevState,
-            [type]: {
-              ...prevState?.[type],
-              [fieldName === 'prompt' ? 'prompt' : 'to' ]: value 
-            }
-          }))
+            setNewTransformation((prevState: any) => ({
+                ...prevState,
+                [type]: {
+                    ...prevState?.[type],
+                    [fieldName === 'prompt' ? 'prompt' : 'to']: value
+                }
+            }))
         }, 1000)();
-          
+
         return onChangeField(value)
-      }
-    
-      const onTransformHandler = async () => {
+    }
+
+    const onTransformHandler = async () => {
         setIsTransforming(true)
-    
+
         setTransformationConfig(
-          deepMergeObjects(newTransformation, transformationConfig)
+            deepMergeObjects(newTransformation, transformationConfig)
         )
-    
+
         setNewTransformation(null)
-    
+
         startTransition(async () => {
-          await updateCredits(userId, creditFee)
+            await updateCredits(userId, creditFee)
         })
-      }
-    
-      useEffect(() => {
-        if(image && (type === 'restore' || type === 'removeBackground')) {
-          setNewTransformation(transformationType.config)
+    }
+
+    useEffect(() => {
+        if (image && (type === 'restore' || type === 'removeBackground')) {
+            setNewTransformation(transformationType.config)
         }
-      }, [image, transformationType.config, type])
+    }, [image, transformationType.config, type])
 
     return (
         <Form {...form}>
@@ -201,13 +203,39 @@ const TransformationForm = ({ data = null, action, type, userId, creditBalance, 
                         )}
                     </div>
                 )}
-                <div className='flex flex-col gap-4'>
 
+                <div className="media-uploader-field">
+                    <CustomField
+                        control={form.control}
+                        name="publicId"
+                        className="flex size-full flex-col"
+                        render={({ field }) => (
+                            <MediaUploader
+                                onValueChange={field.onChange}
+                                setImage={setImage}
+                                publicId={field.value}
+                                image={image}
+                                type={type}
+                            />
+                        )}
+                    />
+
+                    <TransformedImage
+                        image={image}
+                        type={type}
+                        title={form.getValues().title}
+                        isTransforming={isTransforming}
+                        setIsTransforming={setIsTransforming}
+                        transformationConfig={transformationConfig}
+                    />
+                </div>
+
+                <div className='flex flex-col gap-4'>
                     <Button
                         type="button"
                         className="submit-button capitalize"
                         disabled={isTransforming || newTransformation === null}
-                    onClick={onTransformHandler}
+                        onClick={onTransformHandler}
                     >
                         {isTransforming ? 'Transforming...' : 'Apply Transformation'}
                     </Button>

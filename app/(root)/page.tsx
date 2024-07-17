@@ -12,6 +12,11 @@ const Home = async ({ searchParams }: SearchParamProps) => {
 
   return (
     <>
+     <div className="absolute top-10 left-0 right-0 text-center">
+          <p className="text-xl font-bold text-gray-700">
+            **Free credits for beta users have been exhausted. Please check back later for updates!
+          </p>
+        </div>
       <section className="home">
         <Link href='/'>
           <h1 className="home-heading">
@@ -22,9 +27,11 @@ const Home = async ({ searchParams }: SearchParamProps) => {
             <div className='relative'>
               <div className='absolute bg-white -left-2 -top-1 -bottom-0 -right-2 md:-left-3 md:-top-0 md:-bottom-0 md:-right-3 -rotate-1' />
               <p className='relative h1-semibold max-w-[500px] flex-wrap text-center shadow-sm text-purple-500'>Artizen AI!</p>
+
             </div>
           </div>
         </Link>
+       
         <ul className="flex-center w-full gap-20">
           {navLinks.slice(1, 5).map((link) => (
             <Link
@@ -38,7 +45,9 @@ const Home = async ({ searchParams }: SearchParamProps) => {
               <p className="p-14-medium text-center text-white">{link.label}</p>
             </Link>
           ))}
+
         </ul>
+
       </section>
 
       <section className="sm:mt-12">

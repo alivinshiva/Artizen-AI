@@ -12,7 +12,7 @@ const Home = async ({ searchParams }: SearchParamProps) => {
 
   return (
     <>
-     <div className="absolute top-10 left-0 right-0 text-center">
+     <div className="absolute bottom-8 left-0 right-0 text-center">
           <p className="text-xl font-bold text-gray-700">
             **Free credits for beta users have been exhausted. Please check back later for updates!
           </p>
